@@ -188,7 +188,7 @@ function getKeyValue(
   }
 
   if (key.type === 'MemberExpression') {
-    return '[]';
+    return `[${getKeyValue(key.object as Identifier | MemberExpression)}}.${getKeyValue(key.property as Identifier | MemberExpression)}]`;
   }
 
   return key.name;
