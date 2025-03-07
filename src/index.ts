@@ -92,10 +92,15 @@ function stylexKeySort(
           isExpressionStylexMemberExpression(declarator.init.callee)) &&
         declarator.init.arguments?.[0].type === 'ObjectExpression'
       ) {
-        sortObjectKeys(declarator.init.arguments[0], sourceCode, {
-          minKeys,
-          allowLineSeparatedGroups: false,
-        });
+        sortObjectKeys(
+          declarator.init.arguments[0],
+          sourceCode,
+          {
+            minKeys,
+            allowLineSeparatedGroups: false,
+          },
+          true,
+        );
       }
     });
   }
@@ -128,12 +133,13 @@ function sortObjectKeys(
     StylexKeySortPluginOptions,
     'minKeys' | 'allowLineSeparatedGroups'
   >,
+  skipRoot?: true,
 ) {
   if (node.type !== 'ObjectExpression') {
     return;
   }
 
-  if (node.properties.length >= options.minKeys) {
+  if (skipRoot !== true && node.properties.length >= options.minKeys) {
     const properties = options.allowLineSeparatedGroups
       ? getLineSeparatedGroups(node.properties, sourceCode)
       : [node.properties];
@@ -149,8 +155,6 @@ function sortObjectKeys(
     }
   });
 }
-
-const sortableTypes = ['Identifier', 'PrivateName', 'StringLiteral'];
 
 function compareProperties(
   a: ObjectProperty | ObjectMethod | SpreadElement,
