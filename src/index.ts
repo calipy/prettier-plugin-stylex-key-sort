@@ -8,6 +8,7 @@ import {
   ObjectMethod,
   SpreadElement,
   PrivateName,
+  Expression,
 } from '@babel/types';
 import { Parser, ParserOptions, SupportOption } from 'prettier';
 import * as parserBabel from 'prettier/plugins/babel';
@@ -149,6 +150,8 @@ function sortObjectKeys(
   });
 }
 
+const sortableTypes = ['Identifier', 'PrivateName', 'StringLiteral'];
+
 function compareProperties(
   a: ObjectProperty | ObjectMethod | SpreadElement,
   b: ObjectProperty | ObjectMethod | SpreadElement,
@@ -156,12 +159,11 @@ function compareProperties(
   if (a.type === 'SpreadElement' || b.type === 'SpreadElement') {
     return 0;
   }
-
   const aKeyValue = getKeyValue(
-    a.key as Identifier | PrivateName | StringLiteral,
+    a.key as Identifier | PrivateName | StringLiteral | MemberExpression,
   );
   const bKeyValue = getKeyValue(
-    b.key as Identifier | PrivateName | StringLiteral,
+    b.key as Identifier | PrivateName | StringLiteral | MemberExpression,
   );
 
   const aKey = getKeyValuePriorityAndType(aKeyValue);
@@ -174,13 +176,19 @@ function compareProperties(
   return aKeyValue > bKeyValue ? 1 : -1;
 }
 
-function getKeyValue(key: Identifier | PrivateName | StringLiteral): string {
+function getKeyValue(
+  key: Identifier | PrivateName | StringLiteral | MemberExpression,
+): string {
   if (key.type === 'StringLiteral') {
     return key.value;
   }
 
   if (key.type === 'PrivateName') {
     return key.id.name;
+  }
+
+  if (key.type === 'MemberExpression') {
+    return '[]';
   }
 
   return key.name;
