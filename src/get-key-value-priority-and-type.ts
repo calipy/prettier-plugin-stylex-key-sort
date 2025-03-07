@@ -13,11 +13,11 @@ export default function getKeyValuePriorityAndType(
   keyValue: string,
 ): PriorityAndType {
   if (keyValue.startsWith('@supports')) {
-    return { priority: AT_RULE_PRIORITIES['@supports'], type: 'atRule' };
+    return { priority: 1000 + AT_RULE_PRIORITIES['@supports'], type: 'atRule' };
   }
 
   if (keyValue.startsWith('::')) {
-    return { priority: PSEUDO_ELEMENT_PRIORITY, type: 'pseudoElement' };
+    return { priority: 2000 + PSEUDO_ELEMENT_PRIORITY, type: 'pseudoElement' };
   }
 
   if (keyValue.startsWith(':')) {
@@ -28,27 +28,32 @@ export default function getKeyValuePriorityAndType(
 
     return {
       priority:
-        PSEUDO_CLASS_PRIORITIES[prop as keyof typeof PSEUDO_CLASS_PRIORITIES] ??
-        40,
+        3000 +
+        (PSEUDO_CLASS_PRIORITIES[
+          prop as keyof typeof PSEUDO_CLASS_PRIORITIES
+        ] ?? 40),
       type: 'pseudoClass',
     };
   }
 
   if (keyValue.startsWith('@media')) {
-    return { priority: AT_RULE_PRIORITIES['@media'], type: 'atRule' };
+    return { priority: 4000 + AT_RULE_PRIORITIES['@media'], type: 'atRule' };
   }
 
   if (keyValue.startsWith('@container')) {
-    return { priority: AT_RULE_PRIORITIES['@container'], type: 'atRule' };
+    return {
+      priority: 5000 + AT_RULE_PRIORITIES['@container'],
+      type: 'atRule',
+    };
   }
   const wellKnownPriority = wellKnown.findIndex((v) => v === keyValue);
   if (wellKnownPriority >= 0) {
     return {
-      priority: 4000 - (wellKnown.length - wellKnownPriority),
+      priority: wellKnownPriority,
       type: 'wellKnown',
     };
   }
-  return { priority: 1, type: 'string' };
+  return { priority: wellKnown.length, type: 'string' };
 }
 
 const wellKnown = [

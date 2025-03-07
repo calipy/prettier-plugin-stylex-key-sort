@@ -8,7 +8,6 @@ import {
   ObjectMethod,
   SpreadElement,
   PrivateName,
-  Expression,
 } from '@babel/types';
 import { Parser, ParserOptions, SupportOption } from 'prettier';
 import * as parserBabel from 'prettier/plugins/babel';
