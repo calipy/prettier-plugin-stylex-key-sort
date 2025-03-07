@@ -1,7 +1,7 @@
 {
   "name": "@calipy/prettier-plugin-stylex-key-sort",
   "author": "srikrsna",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Prettier plugin to sort StyleX keys",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
